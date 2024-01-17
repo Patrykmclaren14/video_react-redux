@@ -1,15 +1,20 @@
-import { useState } from 'react';
+import { actions } from '../features/position-slice';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
 
 export const Position = () => {
-  const [x, setX] = useState(0);
-  const [y, setY] = useState(0);
+  const { x, y } = useAppSelector(state => state.position)
+  const dispatch = useAppDispatch()
 
-  const moveLeft = () => setX(x => x - 1);
-  const moveRight = () => setX(x => x + 1);
-  const moveUp = () => setY(y => y - 1);
-  const moveDown = () => setY(y => y + 1);
+  const moveLeft = () => dispatch(actions.moveLeft(1));
+  const moveRight = () => dispatch(actions.moveRight(1));
+  const moveUp = () => dispatch(actions.moveUp(1));
+  const moveDown = () => dispatch(actions.moveDown(1));
 
   const transformValue = `translate(${x * 100}%, ${y * 100}%)`;
+
+  const dance = () => {
+    dispatch(actions.doCircle(300))
+  }
 
   return (
     <section className="position">
@@ -29,7 +34,7 @@ export const Position = () => {
         </div>
 
         <div className="field">
-          <div className="track" style={{ transform: transformValue }}>
+          <div className="track" style={{ transform: transformValue }} onClick={dance}>
             {x + y}
           </div>
         </div>

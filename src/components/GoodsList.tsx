@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { goodsSlice, init } from '../features/good-slice';
+import { fetchGoods } from '../services/good';
 
 export const GoodsList = () => {
   const [newGood, setNewGood] = useState('');
-  const [goods, setGoods] = useState<string[]>(['Apple', 'Banana', 'Coconut']);
+  const { value: goods, isLoading, error } = useAppSelector(state => state.goods)
+  const dispatch = useAppDispatch()
 
   const addGood = (goodToAdd: string) => {
-    setGoods(current => [...current, goodToAdd]);
+    dispatch(goodsSlice.actions.add(goodToAdd));
   }
 
   const removeGood = (goodToRemove: string) => {
-    setGoods(current => current.filter(
-      good => good !== goodToRemove,
-    ));
+    dispatch(goodsSlice.actions.take(goodToRemove))
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -25,9 +27,16 @@ export const GoodsList = () => {
     setNewGood('');
   };
 
+  useEffect(() => {
+    dispatch(init())
+  }, [dispatch])
+
   return (
     <section className="goods">
       <h2>Goods:</h2>
+
+      {error && <p>Something went wrong</p>}
+      {isLoading && <p>Loading...</p>}
 
       <form onSubmit={handleSubmit}>
         <input
